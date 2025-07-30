@@ -1,43 +1,48 @@
 import React, { useState } from "react";
 import "../styles/Login.css";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import API from "../api"; // ✅
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate(); // ✅ for page navigation
+  const navigate = useNavigate();
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-
-      const response = await API.post("/auth/login", {
-        email,
-        password,
+    try {
+      const response = await fetch(`${API_BASE}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
+      if (!response.ok) {
+        throw new Error("Invalid credentials or server error");
+      }
 
-    const { token, role, name, email: userEmail } = response.data;
+      const data = await response.json();
+      const { token, role, name, email: userEmail } = data;
 
-    localStorage.setItem(
-      "skillcraft_user",
-      JSON.stringify({ token, role, name, email: userEmail })
-    );
+      localStorage.setItem(
+        "skillcraft_user",
+        JSON.stringify({ token, role, name, email: userEmail })
+      );
 
-    if (role === "admin") {
-      navigate("/admin/manager");
-    } else {
-      navigate("/dashboard");
+      if (role === "admin") {
+        navigate("/admin/manager");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed: " + error.message);
     }
-  } catch (error) {
-    console.error("Login failed:", error);
-    alert("Login failed: " + error.message);
-  }
-};
-
+  };
 
   return (
     <div className="login-container">
@@ -61,13 +66,16 @@ const Login = () => {
         />
         <button className="login-button" type="submit">Login</button>
 
-        {/* ✅ Link to Signup */}
         <p className="login-toggle">
           Don't have an account?{" "}
           <span
             className="signup-link"
             onClick={() => navigate("/signup")}
-            style={{ cursor: "pointer", color: "blue", textDecoration: "underline" }}
+            style={{
+              cursor: "pointer",
+              color: "blue",
+              textDecoration: "underline",
+            }}
           >
             Sign up
           </span>

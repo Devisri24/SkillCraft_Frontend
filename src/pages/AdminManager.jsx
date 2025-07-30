@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Import navigate
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "../styles/AdminManager.css";
-import API from "../api";
-
 
 const subjectsList = ["Maths", "Science", "Social", "English", "Hindi", "Telugu"];
 
@@ -15,19 +12,22 @@ const AdminManager = () => {
   const [selectedStreamId, setSelectedStreamId] = useState(null);
   const [careerOption, setCareerOption] = useState("");
   const [careerList, setCareerList] = useState([]);
-  const navigate = useNavigate(); // ✅ Initialize
+  const navigate = useNavigate();
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
-  API.get("/admin-career/subjects")
-    .then((res) => {
-      const map = {};
-      res.data.forEach((subj) => {
-        map[subj.name.toLowerCase()] = subj._id;
-      });
-      setSubjectIdMap(map);
-    })
-    .catch((err) => console.log("Error loading subjects:", err));
-}, []);
+    fetch(`${API_BASE}/admin-career/subjects`)
+      .then((res) => res.json())
+      .then((data) => {
+        const map = {};
+        data.forEach((subj) => {
+          map[subj.name.toLowerCase()] = subj._id;
+        });
+        setSubjectIdMap(map);
+      })
+      .catch((err) => console.log("Error loading subjects:", err));
+  }, []);
 
   const handleSubjectClick = (subject) => {
     setSelectedSubject(subject);
@@ -37,12 +37,11 @@ const AdminManager = () => {
     const subjectId = subjectIdMap[subject.toLowerCase()];
     if (!subjectId) return;
 
-    API.get(`/admin-career/streams/${subjectId}`)
-    .then((res) => {
-      setStreams(res.data);
-    })
-    .catch((err) => console.log(err));
-    };
+    fetch(`${API_BASE}/admin-career/streams/${subjectId}`)
+      .then((res) => res.json())
+      .then((data) => setStreams(data))
+      .catch((err) => console.log(err));
+  };
 
   const handleAddStream = async (e) => {
     e.preventDefault();
@@ -50,26 +49,31 @@ const AdminManager = () => {
     if (!newStream || !subjectId) return;
 
     try {
-    await API.post("/admin-career/stream", {
-      subjectId,
-      streamName: newStream,
-    });
-    alert("Stream added successfully ✅");
-    setNewStream("");
+      await fetch(`${API_BASE}/admin-career/stream`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ subjectId, streamName: newStream }),
+      });
 
-    const res = await API.get(`/admin-career/streams/${subjectId}`);
-    setStreams(res.data);
-  } catch (err) {
-    console.error("Error adding stream:", err);
-  }
-};
+      alert("Stream added successfully ✅");
+      setNewStream("");
+
+      const res = await fetch(`${API_BASE}/admin-career/streams/${subjectId}`);
+      const data = await res.json();
+      setStreams(data);
+    } catch (err) {
+      console.error("Error adding stream:", err);
+    }
+  };
 
   const handleAddCareer = async () => {
     try {
-    const res = await API.post("/admin-career/add-career", {
-      streamId: selectedStreamId,
-      name: careerOption,
-    });
+      await fetch(`${API_BASE}/admin-career/add-career`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ streamId: selectedStreamId, name: careerOption }),
+      });
+
       alert("Career option added successfully ✅");
       setCareerOption("");
       fetchCareersForStream(selectedStreamId);
@@ -81,17 +85,16 @@ const AdminManager = () => {
 
   const fetchCareersForStream = async (streamId) => {
     try {
-    const res = await API.get(`/admin-career/careers/${streamId}`);
-    setCareerList(res.data);
-  } catch (err) {
-    console.error("Error fetching careers:", err);
-  }
-};
+      const res = await fetch(`${API_BASE}/admin-career/careers/${streamId}`);
+      const data = await res.json();
+      setCareerList(data);
+    } catch (err) {
+      console.error("Error fetching careers:", err);
+    }
+  };
 
-  // ✅ Logout function
   const handleLogout = () => {
-    // clear any session if needed
-    navigate("/"); // redirect to home
+    navigate("/");
   };
 
   return (

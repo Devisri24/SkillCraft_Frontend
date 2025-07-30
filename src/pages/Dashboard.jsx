@@ -2,10 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import axios from "axios";
 import "../styles/Dashboard.css";
-import API from "../api";
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -24,7 +21,8 @@ const Dashboard = () => {
   const storedUser = JSON.parse(localStorage.getItem("skillcraft_user"));
   const token = storedUser?.token;
 
-  // Redirect if not user
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("skillcraft_user"));
     if (!user || user.role !== "user") {
@@ -32,59 +30,56 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
-  // Fetch all subjects on load
   useEffect(() => {
-    API.get("/admin-career/subjects", {
-    headers: { Authorization: `Bearer ${token}` },
-     })
-      .then((res) => {
-        setSubjects(res.data);
+    fetch(`${API_BASE}/admin-career/subjects`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setSubjects(data);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching subjects:", err);
         setLoading(false);
-        if (err.response?.status === 401) navigate("/login");
+        if (err?.status === 401) navigate("/login");
       });
   }, [token, navigate]);
 
-  // On subject click → fetch streams
   const handleSubjectClick = (subject) => {
     setSelectedSubject(subject);
     setSelectedStream(null);
     setCareers([]);
     setStreams([]);
 
-    API.get(`/admin-career/streams/${subject._id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-     })
-      .then((res) => {
-        setStreams(res.data || []);
-      })
+    fetch(`${API_BASE}/admin-career/streams/${subject._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setStreams(data || []))
       .catch((err) => {
         console.error("Error fetching streams:", err);
         setStreams([]);
       });
   };
 
-  // On stream click → fetch careers
-  // On stream click → fetch careers
-const handleStreamClick = (stream) => {
-  setSelectedStream(stream);
-  setCareers([]);
+  const handleStreamClick = (stream) => {
+    setSelectedStream(stream);
+    setCareers([]);
 
-  API.get(`/admin-career/careers/${stream._id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => {
-      console.log("Fetched careers:", res.data); // debug log
-      setCareers(res.data || []); // ✅ Fix: assign array directly
+    fetch(`${API_BASE}/admin-career/careers/${stream._id}`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .catch((err) => {
-      console.error("Error fetching careers:", err);
-      setCareers([]);
-    });
-};
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Fetched careers:", data);
+        setCareers(data || []);
+      })
+      .catch((err) => {
+        console.error("Error fetching careers:", err);
+        setCareers([]);
+      });
+  };
 
   return (
     <>
@@ -149,7 +144,6 @@ const handleStreamClick = (stream) => {
           </div>
         )}
 
-        {/* Static Qualification Jobs */}
         <div className="section">
           <h3>📘 Career Paths Based on Qualification</h3>
           <div className="career-section">
@@ -163,7 +157,7 @@ const handleStreamClick = (stream) => {
             <ul>{degreeJobs.map((job, i) => <li key={i}>🔹 {job}</li>)}</ul>
           </div>
         </div>
-        {/* AI Chatbot */}
+
         <div className="section bot-section">
           <h3>🤖 Your AI Career Companion</h3>
           <p style={{ fontSize: "18px", lineHeight: "1.6" }}>

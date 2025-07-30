@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/AdminLogin.css";
-import API from "../api"; // ✅
 
 const AdminLogin = () => {
   const [adminEmail, setAdminEmail] = useState("");
@@ -9,29 +8,34 @@ const AdminLogin = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-const handleAdminLogin = async (e) => {
-  e.preventDefault();
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
 
-  try {
-    const response = await API.post("/auth/login", {
-      email: adminEmail,
-      password: adminPassword,
-    });
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: adminEmail,
+          password: adminPassword,
+        }),
+      });
 
-    const data = response.data;
+      const data = await res.json();
 
-    if (data.role === "admin") {
-      localStorage.setItem("user", JSON.stringify(data));
-      navigate("/admin/manager");
-    } else {
-      setMessage("❌ Unauthorized or not an admin");
+      if (res.ok && data.role === "admin") {
+        localStorage.setItem("skillcraft_user", JSON.stringify(data));
+        navigate("/admin/manager");
+      } else {
+        setMessage("❌ Unauthorized or not an admin");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage("❌ Network or server error");
     }
-  } catch (error) {
-    console.error("Admin login error:", error);
-    setMessage("❌ Server error or invalid credentials");
-  }
-};
-
+  };
 
   return (
     <div className="admin-login-container">

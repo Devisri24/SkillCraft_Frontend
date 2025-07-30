@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import axios from "axios";
 import "../styles/Signup.css";
 import { useNavigate } from "react-router-dom";
-import API from "../api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "user", // default value
+    role: "user", // default
   });
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,17 +27,31 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-     if (!validateEmail(formData.email)) {
+    if (!validateEmail(formData.email)) {
       setError("❌ Please enter a valid email address");
       return;
     }
+
     try {
-      const response = await API.post("/auth/signup", formData);
-      console.log("Signup successful:", response.data);
-      navigate("/login",{replace : true}); // or dashboard if you prefer
+      const response = await fetch(`${API_BASE}/auth/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.message || "Signup failed");
+      }
+
+      const data = await response.json();
+      console.log("Signup successful:", data);
+      navigate("/login", { replace: true });
     } catch (err) {
-      console.error("Signup failed:", err.response?.data);
-      setError(err.response?.data?.message || "Signup failed");
+      console.error("Signup failed:", err);
+      setError(err.message || "Signup failed");
     }
   };
 
@@ -47,10 +61,30 @@ const Signup = () => {
         <h2>Sign Up</h2>
         {error && <p className="error">{error}</p>}
 
-        <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
-        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
-        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
-        
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
 
         <button type="submit">Register</button>
       </form>
