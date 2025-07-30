@@ -1,0 +1,75 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background-color: #0a1128;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.nav-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #f5f5f5;
+  letter-spacing: 1px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Profile dropdown container (relative positioning) */
+.profile-container {
+  position: relative;
+}
+
+/* Dropdown box */
+.profile-box {
+  position: absolute;
+  top: 38px; /* just below the profile button */
+  right: 0;
+  background-color: #ffffff;
+  color: #111;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+  min-width: 220px;
+  text-align: left;
+  z-index: 1000;
+}
+
+.profile-box p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+/* Buttons */
+.nav-btn {
+  background-color: #1c2541;
+  border: none;
+  color: #ffffff;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+  background-color: #3a506b;
+}
+
+.logout-btn {
+  background-color: #e63946;
+}
+
+.logout-btn:hover {
+  background-color: #c1121f;
+}

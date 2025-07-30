@@ -1,0 +1,89 @@
+/* Use a beautiful font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f4f7ff;
+}
+
+.home-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+}
+
+.header {
+  text-align: center;
+}
+
+.home-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #0d47a1;
+  margin-bottom: 0.5rem;
+}
+
+.home-tagline {
+  font-size: 1.2rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.home-content {
+  text-align: center;
+  max-width: 700px;
+}
+
+.home-description {
+  font-size: 1.1rem;
+  color: #444;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+}
+
+.home-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 24px;
+  font-size: 1rem;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.primary-btn {
+  background-color: #0d47a1;
+  color: #ffffff;
+  border: none;
+}
+
+.primary-btn:hover {
+  background-color: #08306b;
+}
+
+.secondary-btn {
+  background-color: transparent;
+  border: 2px solid #0d47a1;
+  color: #0d47a1;
+}
+
+.secondary-btn:hover {
+  background-color: #e3f2fd;
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+  padding-top: 2rem;
+}
