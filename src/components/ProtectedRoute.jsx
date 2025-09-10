@@ -12,4 +12,4 @@ const ProtectedRoute = ({ element }) => {
   return element;
 };
 
-export default ProtectedRoute; // ✅ This line is REQUIRED
+export default ProtectedRoute; 

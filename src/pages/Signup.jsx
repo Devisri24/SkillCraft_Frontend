@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "../styles/Signup.css";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -56,19 +55,31 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-container">
-      <form className="signup-form" onSubmit={handleSubmit}>
-        <h2>Sign Up</h2>
-        {error && <p className="error">{error}</p>}
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-r from-green-100 via-white to-green-50 px-4">
+      <form
+        className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="mb-6 text-center text-3xl font-extrabold text-green-700">
+          Create Account
+        </h2>
+
+        {error && (
+          <p className="mb-4 rounded-md bg-red-100 p-2 text-center text-sm text-red-600">
+            {error}
+          </p>
+        )}
 
         <input
           type="text"
           name="name"
-          placeholder="Name"
+          placeholder="Full Name"
           value={formData.name}
           onChange={handleChange}
           required
+          className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none"
         />
+
         <input
           type="email"
           name="email"
@@ -76,7 +87,9 @@ const Signup = () => {
           value={formData.email}
           onChange={handleChange}
           required
+          className="mb-4 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none"
         />
+
         <input
           type="password"
           name="password"
@@ -84,9 +97,25 @@ const Signup = () => {
           value={formData.password}
           onChange={handleChange}
           required
+          className="mb-6 w-full rounded-lg border border-gray-300 px-4 py-2 text-gray-700 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-400 focus:outline-none"
         />
 
-        <button type="submit">Register</button>
+        <button
+          type="submit"
+          className="w-full rounded-lg bg-green-600 py-2.5 font-semibold text-white shadow-md transition hover:bg-green-700 hover:shadow-lg"
+        >
+          Register
+        </button>
+
+        <p className="mt-6 text-center text-gray-600">
+          Already have an account?{" "}
+          <span
+            onClick={() => navigate("/login")}
+            className="cursor-pointer font-medium text-green-600 hover:underline"
+          >
+            Login
+          </span>
+        </p>
       </form>
     </div>
   );

@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import "../styles/Dashboard.css";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -71,10 +70,7 @@ const Dashboard = () => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched careers:", data);
-        setCareers(data || []);
-      })
+      .then((data) => setCareers(data || []))
       .catch((err) => {
         console.error("Error fetching careers:", err);
         setCareers([]);
@@ -84,19 +80,28 @@ const Dashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="dashboard-container">
-        <h2 className="page-title">✨ Explore Your Career Path ✨</h2>
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-orange-100 px-6 py-10">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
+          ✨ Explore Your Career Path ✨
+        </h2>
 
         {loading ? (
-          <p className="loading-text">Loading subjects...</p>
+          <p className="text-center text-gray-500 italic">Loading subjects...</p>
         ) : (
-          <div className="section">
-            <h3>Step 1: Choose Your Subject</h3>
-            <div className="card-container">
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-indigo-600 pl-3">
+              Step 1: Choose Your Subject
+            </h3>
+            <div className="flex flex-wrap gap-4 justify-center">
               {subjects.map((subj) => (
                 <div
                   key={subj._id}
-                  className={`card ${selectedSubject?._id === subj._id ? "active" : ""}`}
+                  className={`cursor-pointer px-6 py-4 rounded-xl shadow-md transition text-center font-medium min-w-[130px]
+                    ${
+                      selectedSubject?._id === subj._id
+                        ? "bg-indigo-600 text-white"
+                        : "bg-white border border-gray-200 hover:bg-indigo-50"
+                    }`}
                   onClick={() => handleSubjectClick(subj)}
                 >
                   {subj.name}
@@ -107,14 +112,22 @@ const Dashboard = () => {
         )}
 
         {selectedSubject && (
-          <div className="section">
-            <h3>Step 2: Select a Stream from {selectedSubject.name}</h3>
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-green-500 pl-3">
+              Step 2: Select a Stream from{" "}
+              <span className="text-indigo-600">{selectedSubject.name}</span>
+            </h3>
             {streams.length > 0 ? (
-              <div className="card-container">
+              <div className="flex flex-wrap gap-4 justify-center">
                 {streams.map((stream) => (
                   <div
                     key={stream._id}
-                    className={`card ${selectedStream?._id === stream._id ? "active" : ""}`}
+                    className={`cursor-pointer px-6 py-4 rounded-xl shadow-md transition text-center font-medium min-w-[150px]
+                      ${
+                        selectedStream?._id === stream._id
+                          ? "bg-green-500 text-white"
+                          : "bg-white border border-gray-200 hover:bg-green-50"
+                      }`}
                     onClick={() => handleStreamClick(stream)}
                   >
                     {stream.name}
@@ -122,52 +135,97 @@ const Dashboard = () => {
                 ))}
               </div>
             ) : (
-              <p className="loading-text">No streams available for this subject.</p>
+              <p className="text-center text-gray-500 italic">
+                No streams available for this subject.
+              </p>
             )}
           </div>
         )}
 
         {selectedStream && (
-          <div className="section">
-            <h3>Step 3: Career Options for {selectedStream.name}</h3>
+          <div className="mb-10">
+            <h3 className="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-orange-500 pl-3">
+              Step 3: Career Options for{" "}
+              <span className="text-indigo-600">{selectedStream.name}</span>
+            </h3>
             {careers.length > 0 ? (
-              <div className="career-container">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {careers.map((career) => (
-                  <div key={career._id} className="career-point">
-                    <h4>{career.name}</h4>
+                  <div
+                    key={career._id}
+                    className="bg-white p-6 rounded-xl shadow-md border border-gray-200 hover:shadow-lg transition"
+                  >
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      🎯 {career.name}
+                    </h4>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="loading-text">No careers available for this stream.</p>
+              <p className="text-center text-gray-500 italic">
+                No careers available for this stream.
+              </p>
             )}
           </div>
         )}
 
-        <div className="section">
-          <h3>📘 Career Paths Based on Qualification</h3>
-          <div className="career-section">
-            <h4>10th Pass Jobs</h4>
-            <ul>{tenthJobs.map((job, i) => <li key={i}>🔹 {job}</li>)}</ul>
+        {/* Career Paths Section */}
+        <div className="mb-10">
+          <h3 className="text-xl font-semibold text-gray-700 mb-6 border-l-4 border-purple-500 pl-3">
+            📘 Career Paths Based on Qualification
+          </h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+              <h4 className="text-lg font-bold mb-3 text-indigo-600">
+                10th Pass Jobs
+              </h4>
+              <ul className="space-y-2">
+                {tenthJobs.map((job, i) => (
+                  <li key={i} className="text-gray-700">🔹 {job}</li>
+                ))}
+              </ul>
+            </div>
 
-            <h4>Intermediate Jobs</h4>
-            <ul>{interJobs.map((job, i) => <li key={i}>🔹 {job}</li>)}</ul>
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+              <h4 className="text-lg font-bold mb-3 text-green-600">
+                Intermediate Jobs
+              </h4>
+              <ul className="space-y-2">
+                {interJobs.map((job, i) => (
+                  <li key={i} className="text-gray-700">🔹 {job}</li>
+                ))}
+              </ul>
+            </div>
 
-            <h4>Degree/B.Tech Jobs</h4>
-            <ul>{degreeJobs.map((job, i) => <li key={i}>🔹 {job}</li>)}</ul>
+            <div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
+              <h4 className="text-lg font-bold mb-3 text-orange-600">
+                Degree/B.Tech Jobs
+              </h4>
+              <ul className="space-y-2">
+                {degreeJobs.map((job, i) => (
+                  <li key={i} className="text-gray-700">🔹 {job}</li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div className="section bot-section">
-          <h3>🤖 Your AI Career Companion</h3>
-          <p style={{ fontSize: "18px", lineHeight: "1.6" }}>
-            🌟 Not sure what path to take after 10th, Inter, or Degree?<br />
+        {/* AI Assistant Section */}
+        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-8 shadow-md">
+          <h3 className="text-xl font-semibold text-gray-700 mb-4 border-l-4 border-indigo-500 pl-3">
+            🤖 Your AI Career Companion
+          </h3>
+          <p className="text-gray-700 leading-relaxed">
+            🌟 Not sure what path to take after 10th, Inter, or Degree?
+            <br />
             🧠 Ask anything like:
-            <ul style={{ marginTop: "10px", marginBottom: "10px" }}>
-              <li>👉 “How to become an IAS officer?”</li>
-              <li>👉 “Which government jobs are available after diploma?”</li>
-              <li>👉 “What's the salary of a Scientist in ISRO?”</li>
-            </ul>
+          </p>
+          <ul className="list-disc list-inside text-gray-700 mt-3 space-y-1">
+            <li>👉 “How to become an IAS officer?”</li>
+            <li>👉 “Which government jobs are available after diploma?”</li>
+            <li>👉 “What's the salary of a Scientist in ISRO?”</li>
+          </ul>
+          <p className="mt-4 text-gray-700">
             💬 Click on the chat bubble at the bottom-right to talk to your career guide!
           </p>
         </div>
